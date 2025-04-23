@@ -3,11 +3,13 @@ const output = document.getElementById('output');
 
 // Create the "Loading..." row initially
 const loadingRow = document.createElement('tr');
+loadingRow.setAttribute('id', 'loading'); // ✅ Add this line
 const loadingCell = document.createElement('td');
 loadingCell.setAttribute('colspan', '2');
 loadingCell.textContent = 'Loading...';
 loadingRow.appendChild(loadingCell);
 output.appendChild(loadingRow);
+
 
 // Function to create a promise that resolves after a random time (1-3 seconds)
 function createRandomPromise(promiseName) {
