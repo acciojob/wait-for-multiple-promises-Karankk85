@@ -3,12 +3,10 @@ const output = document.getElementById('output');
 
 // Create the "Loading..." row initially
 const loadingRow = document.createElement('tr');
-const loadingCell1 = document.createElement('td');
-const loadingCell2 = document.createElement('td');
-loadingCell1.setAttribute('colspan', '2');
-loadingCell1.textContent = 'Loading...';
-loadingRow.appendChild(loadingCell1);
-loadingRow.appendChild(loadingCell2);
+const loadingCell = document.createElement('td');
+loadingCell.setAttribute('colspan', '2');
+loadingCell.textContent = 'Loading...';
+loadingRow.appendChild(loadingCell);
 output.appendChild(loadingRow);
 
 // Function to create a promise that resolves after a random time (1-3 seconds)
@@ -16,8 +14,8 @@ function createRandomPromise(promiseName) {
     const randomTime = (Math.random() * 2 + 1).toFixed(3); // Random time between 1 and 3 seconds
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve({ promiseName, time: randomTime });
-        }, randomTime * 1000); // Convert to milliseconds
+            resolve({ promiseName, time: parseFloat(randomTime) });
+        }, randomTime * 1000);
     });
 }
 
@@ -35,33 +33,27 @@ Promise.all(promises)
         output.removeChild(loadingRow);
 
         // Populate the table with the results of each promise
-        let totalTime = 0;
-        results.forEach((result, index) => {
+        let maxTime = 0;
+        results.forEach((result) => {
             const row = document.createElement('tr');
-            const promiseNameCell = document.createElement('td');
+            const nameCell = document.createElement('td');
             const timeCell = document.createElement('td');
 
-            promiseNameCell.textContent = result.promiseName;
-            timeCell.textContent = result.time;
-            row.appendChild(promiseNameCell);
+            nameCell.textContent = result.promiseName;
+            timeCell.textContent = result.time.toFixed(3);
+            row.appendChild(nameCell);
             row.appendChild(timeCell);
-
             output.appendChild(row);
 
-            // Track the total time (the time the longest promise took)
-            totalTime = Math.max(totalTime, parseFloat(result.time));
+            maxTime = Math.max(maxTime, result.time);
         });
 
         // Add the "Total" row
         const totalRow = document.createElement('tr');
-        const totalNameCell = document.createElement('td');
-        const totalTimeCell = document.createElement('td');
-
-        totalNameCell.textContent = 'Total';
-        totalTimeCell.textContent = totalTime.toFixed(3); // Format the total time to 3 decimal places
-        totalRow.appendChild(totalNameCell);
-        totalRow.appendChild(totalTimeCell);
-
+        totalRow.innerHTML = `
+            <td><strong>Total</strong></td>
+            <td><strong>${maxTime.toFixed(3)}</strong></td>
+        `;
         output.appendChild(totalRow);
     })
     .catch((error) => {
